@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { validateShortlinkMod, validateStaff } from "../../controllers/v1/auth";
+import { validateLoggedIn } from "../../controllers/v1/auth";
 import {
 	getAllShortLinks,
 	getOneShortLink_public,
@@ -13,16 +13,15 @@ import {
 
 const r = Router();
 
-// * staff dashboard
-r.get("/stats", validateStaff, getShortlinkStats);
-r.get("/clickCounts", validateStaff, clickCountsOnly);
+// * Protected logged in
+r.get("/stats", validateLoggedIn, getShortlinkStats);
+r.get("/clickCounts", validateLoggedIn, clickCountsOnly);
 
 // * Public
 r.get("/:shorten", getOneShortLink_public); // ? query option: ?updateClick=1
 
-// * Protected shortlinkmod only
-r.use(validateShortlinkMod);
-
+// * Protected logged in
+r.use(validateLoggedIn);
 r.get("/", getAllShortLinks);
 r.post("/", createShortLink);
 r.get("/:_id/admin", getOneShortLink_admin);

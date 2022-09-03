@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { validateAdmin } from "../../controllers/v1/auth";
+import { validateLoggedIn } from "../../controllers/v1/auth";
 import { createUser, getAllUsers, getOneUser_public, getOneUser_protected, updateUserData, changePassword, deleteUser } from "../../controllers/v1/user";
 
 const r = Router();
@@ -8,7 +8,7 @@ const r = Router();
 r.get("/:username", getOneUser_public);
 
 // * Protected admin only
-r.use(validateAdmin);
+r.use(validateLoggedIn);
 
 r.get("/", getAllUsers);
 r.post("/", createUser); // ! register only allowed for admin for now

@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { validateStaff } from "../../controllers/v1/auth";
+import { validateLoggedIn } from "../../controllers/v1/auth";
 import { getAllNotes, getOneNote, createNote, updateNote, deleteNote } from "../../controllers/v1/note";
 
 const r = Router();
 
-// * Protected admin only
-r.use(validateStaff);
+// * Protected logged in
+r.use(validateLoggedIn);
 
 r.get("/", getAllNotes);
 r.post("/", createNote);

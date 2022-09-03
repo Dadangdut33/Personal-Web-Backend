@@ -22,6 +22,7 @@ import { userRouterV1 } from "./api/v1/user";
 import { shortlinkRouterV1 } from "./api/v1/shortlink";
 import { blogRouterV1 } from "./api/v1/blog";
 import { noteRouterV1 } from "./api/v1/note";
+import { projectRouterV1 } from "./api/v1/project";
 import { Schema } from "mongoose";
 
 // --------------------------------------------------
@@ -41,7 +42,7 @@ const sessionCfg = {
 		ttl,
 	}),
 };
-const whiteLists = ["https://himtiuinjkt.or.id"];
+const whiteLists = ["https://dadangdut33.codes"];
 
 // --------------------------------------------------
 // middleware
@@ -69,6 +70,7 @@ app.use("/v1/user", userRouterV1);
 app.use("/v1/shortlink", shortlinkRouterV1);
 app.use("/v1/blog", blogRouterV1);
 app.use("/v1/note", noteRouterV1);
+app.use("/v1/project", projectRouterV1);
 
 // --------------------------------------------------
 // ! Not found page error
