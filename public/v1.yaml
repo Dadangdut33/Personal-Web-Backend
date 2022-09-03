@@ -1,0 +1,2563 @@
+openapi: 3.0.2
+info:
+  title: Dadangdut33 Personal Web Backend API
+  description: |-
+    This document details my personal website backend API as it is right now. It is in no way a promise to never change it, any changes can be tracked on the github repository.
+
+    Some useful links:
+    - [Backend repository](https://github.com/Dadangdut33/Personal-Web-Backend)
+    - [Frontend repository](https://github.com/Dadangdut33/Personal-Web)
+
+    Authentication might not work when using swagger authorization, but you can still login using the login API located [here](#operations-Auth-login).
+
+    This domain is protected from CORS. When in production, authentication from another websites will only work if the domain is whitelisted. It is set in the **CORS** option.
+  contact:
+    email: contact@dadangdut33.codes
+  license:
+    name: MIT
+    url: https://github.com/Dadangdut33/Personal-Web-Backend/blob/master/LICENSE
+  version: "1.0"
+externalDocs:
+  description: Find out more about me
+  url: https://dadangdut33.codes/
+servers:
+  - url: /v1
+    description: V1 API
+tags:
+  - name: Blog
+  - name: Project
+  - name: Shortlink
+  - name: Note
+  - name: User
+  - name: Auth
+paths:
+  # -----------------------------------------------------------------------------------
+  /blog:
+    get:
+      tags:
+        - Blog
+      summary: Get all blog posts
+      description: Get all blog posts
+      operationId: getAllBlogs
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: perPage
+          in: query
+          description: Limit per page. If not provided will returns all the data
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: content
+          in: query
+          description: Content of the forum. If provided, data will be returned with its content. Else data will be returned without its content.
+          required: false
+          schema:
+            type: integer
+            format: int32
+            enum:
+              - 1
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/blogList"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security: []
+    post:
+      tags:
+        - Blog
+      summary: Create a blog post
+      description: Create a blog post
+      operationId: createBlog
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/blogEditCreateRequest"
+        description: Blog to create
+      responses:
+        "201":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/blogCreateResponse"
+        "400":
+          description: A bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_forbidden"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+  /blog/tags:
+    get:
+      tags:
+        - Blog
+      summary: Get all tags of blog
+      description: Get all tagsof blog
+      operationId: getAllTagsBlog
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/tagsData"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security: []
+  /blog/stats:
+    get:
+      tags:
+        - Blog
+      summary: Get blog stats
+      description: Get blog stats
+      operationId: getBlogStats
+      responses:
+        "200":
+          description: A successful response. Data is an array of blog stats (first index) and blog revision (second index) stats.
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/statsData"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+  /blog/{_id}:
+    get:
+      tags:
+        - Blog
+      summary: Get a blog post by ID
+      description: Get a blog post by ID
+      operationId: getBlogById
+      parameters:
+        - name: _id
+          in: path
+          description: ID of the blog post
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/blog"
+                  message:
+                    type: string
+                  success:
+                    type: boolean
+        "400":
+          description: A bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+        "422":
+          description: Validation error such as Id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_notFound"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security: []
+    put:
+      tags:
+        - Blog
+      summary: Update a blog post
+      description: Update a blog post
+      operationId: updateBlog
+      parameters:
+        - in: path
+          name: _id
+          required: true
+          schema:
+            type: string
+          description: Blog ID to update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/blogEditCreateRequest"
+        description: Blog to update
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/blogEditResponse"
+        "400":
+          description: A bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_forbidden"
+        "422":
+          description: Validation error such as Id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_notFound"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+    delete:
+      tags:
+        - Blog
+      summary: Delete a blog post
+      description: Delete a blog post
+      operationId: deleteBlog
+      parameters:
+        - name: _id
+          in: path
+          description: ID of the blog post
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/blogDeleteResponse"
+        "400":
+          description: A bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_forbidden"
+        "422":
+          description: Validation error such as Id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_notFound"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+  /blog/{_id}/revision:
+    get:
+      tags:
+        - Blog
+      summary: Get all revisions of a blog post
+      description: Get all revisions of a blog post
+      operationId: getBlogRevisions
+      parameters:
+        - name: _id
+          in: path
+          description: ID of the blog post
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: perPage
+          in: query
+          description: Limit per page. If not provided will returns all the data
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/blogRevisionList"
+        "400":
+          description: A bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_forbidden"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+  # -----------------------------------------------------------------------------------
+  /blog/revision:
+    get:
+      tags:
+        - Blog
+      summary: Get all blog post revisions
+      description: Get all blog post revisions
+      operationId: getAllBlogRevisions
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: perPage
+          in: query
+          description: Limit per page. If not provided will returns all the data
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: content
+          in: query
+          description: Content of the forum. If provided, data will be returned with its content. Else data will be returned without its content.
+          required: false
+          schema:
+            type: integer
+            format: int32
+            enum:
+              - 1
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/blogRevisionList"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_forbidden"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+  /blog/revision/{_id}:
+    get:
+      tags:
+        - Blog
+      summary: Get a blog post revision by its revision Id
+      description: Get a blog post revision by its revision Id
+      operationId: getBlogRevisionById
+      parameters:
+        - name: _id
+          in: path
+          description: Id of the blog post revision
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/blogRevision"
+                  message:
+                    type: string
+                  success:
+                    type: boolean
+        "400":
+          description: A bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_forbidden"
+        "422":
+          description: Validation error such as Id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_notFound"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+    put:
+      tags:
+        - Blog
+      summary: Update a blog post revision
+      description: Update a blog post revision
+      operationId: updateBlogRevision
+      parameters:
+        - in: path
+          name: _id
+          required: true
+          schema:
+            type: string
+          description: Blog post revision ID to update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/blogEditCreateRequest"
+        description: Blog post revision to update
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/blogRevisionEditResponse"
+        "400":
+          description: A bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_forbidden"
+        "422":
+          description: Validation error such as Id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_notFound"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+    delete:
+      tags:
+        - Blog
+      summary: Delete a blog post revision
+      description: Delete a blog post revision
+      operationId: deleteBlogRevision
+      parameters:
+        - name: _id
+          in: path
+          description: ID of the blog post revision
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/blogRevisionDeleteResponse"
+        "400":
+          description: A bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_forbidden"
+        "422":
+          description: Validation error such as Id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_notFound"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+
+  /shortlink:
+    get:
+      tags:
+        - Shortlink
+      summary: Get all shortlinks
+      description: Get all shortlinks
+      operationId: getAllShortlinks
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: perPage
+          in: query
+          description: Limit per page. If not provided will returns all the data
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/shortlinkList"
+        "400":
+          description: A bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_forbidden"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+    post:
+      tags:
+        - Shortlink
+      summary: Create a shortlink
+      description: Create a shortlink
+      operationId: createShortlink
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/shortlinkEditCreateRequest"
+      responses:
+        "201":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/shortlinkCreateResponse"
+        "400":
+          description: A bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_forbidden"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+  /shortlink/stats:
+    get:
+      tags:
+        - Shortlink
+      summary: Get shortlink stats
+      description: Get shortlink stats
+      operationId: getShortlinkStats
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/statsData"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+  /shortlink/clickCounts:
+    get:
+      tags:
+        - Shortlink
+      summary: Get shortlink click counts
+      description: Get shortlink click counts
+      operationId: getShortlinkClickCounts
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/tagsData"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_forbidden"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+  /shortlink/{shorten}:
+    get:
+      tags:
+        - Shortlink
+      summary: Get a shortlink
+      description: Get a shortlink
+      operationId: getShortlink
+      parameters:
+        - name: shorten
+          in: path
+          description: shorten link/keywords of the shortlink
+          required: true
+          schema:
+            type: string
+        - name: updateClick
+          in: query
+          description: Update the click count of the shortlink
+          required: false
+          schema:
+            type: number
+            required:
+              - "1"
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    $ref: "#/components/schemas/shortlink"
+                  message:
+                    type: string
+                    description: A message
+                  success:
+                    type: boolean
+                    description: Whether the request was successful or not
+        "422":
+          description: Validation error such as Id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_notFound"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security: []
+  /shortlink/{_id}/admin:
+    get:
+      tags:
+        - Shortlink
+      summary: Get a shortlink by id (staff only)
+      description: Get a shortlink by id (staff only)
+      operationId: getShortlinkAdmin
+      parameters:
+        - name: _id
+          in: path
+          description: ID of the shortlink
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    $ref: "#/components/schemas/shortlink"
+                  message:
+                    type: string
+                    description: A message
+                  success:
+                    type: boolean
+                    description: Whether the request was successful or not
+        "422":
+          description: Validation error such as Id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_notFound"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+  /shortlink/{_id}:
+    put:
+      tags:
+        - Shortlink
+      summary: Update a shortlink
+      description: Update a shortlink
+      operationId: updateShortlink
+      parameters:
+        - name: _id
+          in: path
+          description: ID of the shortlink
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/shortlinkEditCreateRequest"
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/shortlinkCreateResponse"
+        "400":
+          description: A bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_forbidden"
+        "422":
+          description: Validation error such as Id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_notFound"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+    delete:
+      tags:
+        - Shortlink
+      summary: Delete a shortlink
+      description: Delete a shortlink
+      operationId: deleteShortlink
+      parameters:
+        - name: _id
+          in: path
+          description: ID of the shortlink
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/shortlinkDeleteResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_forbidden"
+        "422":
+          description: Validation error such as Id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_notFound"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+  # -----------------------------------------------------------------------------------
+  /note:
+    get:
+      tags:
+        - Note
+      summary: Get all notes
+      description: Get all notes
+      operationId: getNoteList
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: perPage
+          in: query
+          description: Limit per page. If not provided will returns all the data
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: byPosition
+          in: query
+          description: Sort by position
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/noteList"
+        "400":
+          description: A bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+    post:
+      tags:
+        - Note
+      summary: Create a note
+      description: Create a note
+      operationId: createNote
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/noteEditCreateRequest"
+      responses:
+        "201":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/noteCreateResponse"
+        "400":
+          description: A bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_forbidden"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+  /note/{_id}:
+    get:
+      tags:
+        - Note
+      summary: Get a note
+      description: Get a note
+      operationId: getNote
+      parameters:
+        - name: _id
+          in: path
+          description: ID of the note
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/note"
+        "400":
+          description: A bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_forbidden"
+        "422":
+          description: Validation error such as Id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_notFound"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+    put:
+      tags:
+        - Note
+      summary: Update a note
+      description: Update a note
+      operationId: updateNote
+      parameters:
+        - name: _id
+          in: path
+          description: ID of the note
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/noteEditCreateRequest"
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/noteEditResponse"
+        "400":
+          description: A bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_forbidden"
+        "422":
+          description: Validation error such as Id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_notFound"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+    delete:
+      tags:
+        - Note
+      summary: Delete a note
+      description: Delete a note
+      operationId: deleteNote
+      parameters:
+        - name: _id
+          in: path
+          description: ID of the note
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/noteDeleteResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_forbidden"
+        "422":
+          description: Validation error such as Id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_notFound"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+  # -----------------------------------------------------------------------------------
+  /user:
+    get:
+      tags:
+        - User
+      summary: Get all users
+      description: Get all users
+      operationId: getUser
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: perPage
+          in: query
+          description: Limit per page. If not provided will returns all the data
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/userList"
+        "400":
+          description: A bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+    post:
+      tags:
+        - User
+      summary: Create a user
+      description: Create a user
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/userEditCreateRequest"
+      responses:
+        "201":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/userCreateResponse"
+        "400":
+          description: A bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_forbidden"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+  /user/{_id}:
+    put:
+      tags:
+        - User
+      summary: Update a user
+      description: Update a user
+      operationId: updateUser
+      parameters:
+        - name: _id
+          in: path
+          description: ID of the user
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/userEditCreateRequest"
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/userEditResponse"
+        "400":
+          description: A bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_forbidden"
+        "422":
+          description: Validation error such as Id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_notFound"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+    delete:
+      tags:
+        - User
+      summary: Delete a user
+      description: Delete a user
+      operationId: deleteUser
+      parameters:
+        - name: username
+          in: path
+          description: Username of the user
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/userDeleteResponse"
+        "400":
+          description: A bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_forbidden"
+        "422":
+          description: Validation error such as Id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_notFound"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+  /user/{_id}/admin:
+    get:
+      tags:
+        - User
+      summary: Get full details of user by _id (admin only)
+      description: Get full details of user by _id (admin only)
+      operationId: getUserByIdAdmin
+      parameters:
+        - name: _id
+          in: path
+          description: _id of the user
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    $ref: "#/components/schemas/userProtected"
+        "400":
+          description: A bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_forbidden"
+        "422":
+          description: Validation error such as Id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_notFound"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+  /user/{_id}/password:
+    put:
+      tags:
+        - User
+      summary: Update a user's password
+      description: Update a user's password
+      operationId: updateUserPassword
+      parameters:
+        - name: _id
+          in: path
+          description: _id of the user
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  description: The new password
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/userPasswordEditResponse"
+        "400":
+          description: A bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_forbidden"
+        "422":
+          description: Validation error such as Id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_notFound"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security:
+        - cookieAuth: []
+  /user/{username}:
+    get:
+      tags:
+        - User
+      summary: Get a user by username
+      description: Get a user by username
+      operationId: getUserByUsername
+      parameters:
+        - name: username
+          in: path
+          description: Username of the user
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    $ref: "#/components/schemas/userPublic"
+                  message:
+                    type: string
+                    description: A message describing the result of the request
+                  success:
+                    type: boolean
+                    description: Whether the request was successful or not
+        "400":
+          description: A bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+        "422":
+          description: Validation error such as Id not found
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_notFound"
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security: []
+  # -----------------------------------------------------------------------------------
+  /auth:
+    get:
+      tags:
+        - "Auth"
+      summary: Get the current user details
+      description: Get the current user details
+      operationId: getAuth
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/userPublic"
+                  message:
+                    type: string
+                    description: A message describing the result of the request
+                    default: Logged in
+                  success:
+                    type: boolean
+                    description: Whether the request was successful or not
+                    default: true
+        "401":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    default: "null"
+                  message:
+                    type: string
+                    description: A message describing the result of the request
+                    default: not logged in
+                  success:
+                    type: boolean
+                    description: Whether the request was successful or not
+                    default: false
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security: []
+    post:
+      tags:
+        - "Auth"
+      summary: Login
+      description: Login. A cookie will be returned on the response. You need to set it in your client. You can login using either username or email. As explained at the [top](#) of the page, when in production authentication from another websites will only work if the domain is whitelisted.
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/authLogin"
+      responses:
+        "200":
+          description: >
+            A successful response
+            The session ID is returned in a cookie named `connect.sid`. You need to include this cookie in subsequent requests.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    default: "null"
+                  message:
+                    type: string
+                    description: A message describing the result of the request
+                    default: Logged in
+                  success:
+                    type: boolean
+                    description: Whether the request was successful or not
+                    default: true
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: connect.sid=abcde12345; Path=/; HttpOnly
+        "400":
+          description: A bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    default: "null"
+                  message:
+                    type: string
+                    description: A message describing the result of the request
+                    default: "Username/Password is required"
+                  success:
+                    type: boolean
+                    description: Whether the request was successful or not
+                    default: false
+        "401":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    default: "null"
+                  message:
+                    type: string
+                    description: A message describing the result of the request
+                    default: "Invalid username/email or password"
+                  success:
+                    type: boolean
+                    description: Whether the request was successful or not
+                    default: false
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security: []
+    delete:
+      tags:
+        - "Auth"
+      summary: Logout
+      description: Logout
+      operationId: logout
+      responses:
+        "200":
+          description: A successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    default: "null"
+                  message:
+                    type: string
+                    description: A message describing the result of the request
+                    default: Logout successful
+                  success:
+                    type: boolean
+                    description: Whether the request was successful or not
+                    default: true
+        "401":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+                    default: "null"
+                  message:
+                    type: string
+                    description: A message describing the result of the request
+                    default: not logged in
+                  success:
+                    type: boolean
+                    description: Whether the request was successful or not
+                    default: false
+        "500":
+          description: A server error
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/error_default"
+      security: []
+
+# -----------------------------------------------------------------------------------
+components:
+  schemas:
+    error_forbidden:
+      type: object
+      properties:
+        message:
+          type: object
+          nullable: true
+          default: null
+        status:
+          type: string
+          description: Error message
+          default: "{Details why the request was forbidden}"
+        success:
+          type: boolean
+          default: false
+    error_notFound:
+      type: object
+      properties:
+        data:
+          type: object
+          nullable: true
+          default: null
+        message:
+          type: string
+          default: '{params}: "{value}" not found'
+        success:
+          type: boolean
+          default: false
+    error_default:
+      type: object
+      properties:
+        data:
+          type: object
+          nullable: true
+          default: null
+        message:
+          type: string
+          default: "{err msg}. If you think that this is a bug, please submit an issue at https://github.com/Litbang-HIMTI/Backend-Website-Himti/issues"
+        success:
+          type: boolean
+          default: false
+    # -----------------------------------------------------------------------------------
+    statsData:
+      type: object
+      properties:
+        data:
+          description: The data to be displayed in the stats page. Blog and events return as array because of its revision history.
+          properties:
+            ns:
+              type: string
+              description: Namespace
+            count:
+              type: number
+              description: Number of documents
+            size:
+              type: number
+              description: Size of documents in bytes
+            avgObjSize:
+              type: number
+              description: Average object size in bytes
+            storageSize:
+              type: number
+              description: (Pre)allocated space for the collection in bytes
+            numExtents:
+              type: number
+              description: Number of extents (contiguously allocated chunks of datafile space)
+            ninDexes:
+              type: number
+              description: Number of indexes
+            lastExtendSize:
+              type: number
+              description: Size of the most recently created extent in bytes
+            paddingFactor:
+              type: number
+              description: Padding can speed up updates if documents grow
+            userFlags:
+              type: number
+              description: User defined flags for the collection
+              nullable: true
+            totalIndexSize:
+              type: number
+              description: Total index size in bytes
+            indexSizes:
+              type: object
+              description: Size of specific indexes in bytes
+              properties:
+                _id_:
+                  type: number
+                index_string:
+                  type: number
+            capped:
+              type: boolean
+              description: Whether the collection is capped
+            max:
+              type: number
+              description: Max number of documents in a capped collection
+            maxSize:
+              type: number
+              description: Max size of a capped collection
+            indexDetails:
+              type: string
+              description: Details of the indexes (TYPE IS ANY)
+            ok:
+              type: number
+              description: The command result
+            indexBuilds:
+              type: number
+              description: An array that contains the names of the indexes that are currently being built on the collection
+            totalSize:
+              type: number
+              description: The sum of the storageSize and totalIndexSize. The scale argument affects this value
+            scaleFactor:
+              type: number
+              description: The scale factor of the collection
+        message:
+          type: string
+          description: A message to be displayed to the user
+        success:
+          type: boolean
+          default: false
+    tagsData:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              _id:
+                type: string
+                description: Tag name
+              count:
+                type: number
+                description: Number of documents with this tag
+        message:
+          type: string
+          description: A message to be displayed to the user
+        success:
+          type: boolean
+          default: false
+    # -----------------------------------------------------------------------------------
+    blog:
+      type: object
+      properties:
+        _id:
+          type: object
+          uniqueItems: true
+        author:
+          $ref: "#/components/schemas/userPublic"
+        title:
+          type: string
+        visibility:
+          type: string
+          enum:
+            - public
+            - draft
+            - private
+        description:
+          type: string
+        content:
+          type: string
+        thumbnail:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        pinned:
+          type: boolean
+          description: Whether the post is pinned or not
+        showAtHome:
+          type: boolean
+          description: Whether the blog post is shown at the home page or not
+        editedBy:
+          $ref: "#/components/schemas/userPublic"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    blogList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/blog"
+        page:
+          type: integer
+          description: The page of the list/query
+        pages:
+          type: integer
+          description: The number of pages available
+        message:
+          type: string
+          description: A message to be displayed to the user
+        success:
+          type: boolean
+          description: Whether the request was successful or not
+    blogEditCreateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        visibility:
+          type: string
+          enum:
+            - public
+            - draft
+            - private
+        description:
+          type: string
+        content:
+          type: string
+        thumbnail:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        pinned:
+          type: boolean
+        showAtHome:
+          type: boolean
+    blogEditResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: "#/components/schemas/blog"
+        message:
+          type: string
+          description: A message to be displayed to the user
+          default: "Successfully updated Blog and {successfully/fail} to moved old blog post to revision"
+        success:
+          type: boolean
+          description: Whether the request was successful or not
+    blogCreateResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: "#/components/schemas/blog"
+        message:
+          type: string
+          description: A message to be displayed to the user
+          default: "Blog created successfully"
+        success:
+          type: boolean
+          description: Whether the request was successful or not
+    blogDeleteResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: "#/components/schemas/blog"
+        message:
+          type: string
+          description: A message to be displayed to the user
+          default: "Successfully deleted blog post and {successfully/fail} to delete its revision history"
+        success:
+          type: boolean
+          description: Whether the request was successful or not
+    # -----------------------------------------------------------------------------------
+    blogRevision:
+      type: object
+      properties:
+        _id:
+          type: string
+        author:
+          $ref: "#/components/schemas/userPublic"
+        title:
+          type: string
+        visibility:
+          type: string
+          enum:
+            - public
+            - draft
+            - private
+        description:
+          type: string
+        content:
+          type: string
+        thumbnail:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        pinned:
+          type: boolean
+          description: Whether the post is pinned or not
+        showAtHome:
+          type: boolean
+          description: Whether the blog post is shown at the home page or not
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        revision:
+          type: integer
+          description: The revision number of this revision
+        blogId:
+          $ref: "#/components/schemas/blog"
+          description: The event this revision belongs to. Will show full blog data for get one, but will only show the fk _id for lists.
+    blogRevisionList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/blogRevision"
+        page:
+          type: integer
+          description: The page of the list/query
+        pages:
+          type: integer
+          description: The number of pages available
+        message:
+          type: string
+          description: A message to be displayed to the user
+        success:
+          type: boolean
+          description: Whether the request was successful or not
+    blogRevisionEditResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: "#/components/schemas/blogRevision"
+        message:
+          type: string
+          description: A message to be displayed to the user
+          default: "Successfully updated Blog revision"
+        success:
+          type: boolean
+          description: Whether the request was successful or not
+    blogRevisionDeleteResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: "#/components/schemas/blogRevision"
+        message:
+          type: string
+          description: A message to be displayed to the user
+          default: "Successfully deleted Blog revision"
+        success:
+          type: boolean
+          description: Whether the request was successful or not
+    # -----------------------------------------------------------------------------------
+    note:
+      type: object
+      properties:
+        _id:
+          type: string
+          uniqueItems: true
+        author:
+          $ref: "#/components/schemas/userPublic"
+        title:
+          type: string
+          description: The title of the note
+        content:
+          type: string
+          description: The content of the note
+        position:
+          type: number
+          description: The position of the note
+        editedBy:
+          $ref: "#/components/schemas/userPublic"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    noteList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/note"
+        page:
+          type: integer
+          description: The page of the list/query
+        pages:
+          type: integer
+          description: The number of pages available
+        message:
+          type: string
+          description: A message to be displayed to the user
+        success:
+          type: boolean
+          description: Whether the request was successful or not
+    noteEditCreateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The title of the note
+        content:
+          type: string
+          description: The content of the note
+    noteEditResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: "#/components/schemas/note"
+        message:
+          type: string
+          description: A message to be displayed to the user
+          default: "Note updated successfully"
+        success:
+          type: boolean
+          description: Whether the request was successful or not
+    noteCreateResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: "#/components/schemas/note"
+        message:
+          type: string
+          description: A message to be displayed to the user
+          default: "Note created successfully"
+        success:
+          type: boolean
+          description: Whether the request was successful or not
+    noteDeleteResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: "#/components/schemas/note"
+        message:
+          type: string
+          description: A message to be displayed to the user
+          default: "Note deleted successfully"
+        success:
+          type: boolean
+          description: Whether the request was successful or not
+    # -----------------------------------------------------------------------------------
+    shortlink:
+      type: object
+      properties:
+        _id:
+          type: string
+          uniqueItems: true
+        author:
+          type: object
+          $ref: "#/components/schemas/userPublic"
+        url:
+          type: string
+          description: The original url that this shortlink redirects to
+        shorten:
+          type: string
+          description: The shorten url (after last /)
+        clickCount:
+          type: integer
+          description: The amount of clicks this shortlink has received
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    shortlinkList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/shortlink"
+        page:
+          type: integer
+          description: The page of the list/query
+        pages:
+          type: integer
+          description: The number of pages available
+        message:
+          type: string
+          description: A message to be displayed to the user
+        success:
+          type: boolean
+          description: Whether the request was successful or not
+    shortlinkEditCreateRequest:
+      type: object
+      properties:
+        url:
+          type: string
+          description: The original url that this shortlink redirects to
+        shorten:
+          type: string
+          description: The shorten url (after last /)
+    shortlinkEditResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: "#/components/schemas/shortlink"
+        message:
+          type: string
+          description: A message to be displayed to the user
+          default: "Shortlink updated successfully"
+        success:
+          type: boolean
+          description: Whether the request was successful or not
+    shortlinkCreateResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: "#/components/schemas/shortlink"
+        message:
+          type: string
+          description: A message to be displayed to the user
+          default: "Shortlink created successfully"
+        success:
+          type: boolean
+          description: Whether the request was successful or not
+    shortlinkDeleteResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: "#/components/schemas/shortlink"
+        message:
+          type: string
+          description: A message to be displayed to the user
+          default: "Shortlink deleted successfully"
+        success:
+          type: boolean
+          description: Whether the request was successful or not
+    # -----------------------------------------------------------------------------------
+    user:
+      type: object
+      properties:
+        _id:
+          type: string
+          uniqueItems: true
+        username:
+          type: string
+          description: The username of the user
+          uniqueItems: true
+        first_name:
+          type: string
+          description: The first name of the user
+        last_name:
+          type: string
+          description: The last name of the user
+        email:
+          type: string
+          description: The email of the user
+          uniqueItems: true
+        role:
+          type: array
+          items:
+            type: string
+            description: User role(s)
+            enum:
+              - admin
+              - editor
+              - forum_moderator
+              - shortlink_moderator
+              - user
+        salt:
+          type: string
+        hash:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    userProtected:
+      type: object
+      properties:
+        _id:
+          type: string
+          uniqueItems: true
+        username:
+          type: string
+          description: The username of the user
+          uniqueItems: true
+        first_name:
+          type: string
+          description: The first name of the user
+        last_name:
+          type: string
+          description: The last name of the user
+        email:
+          type: string
+          description: The email of the user
+          uniqueItems: true
+        role:
+          type: array
+          items:
+            type: string
+            description: User role(s)
+            enum:
+              - admin
+              - editor
+              - forum_moderator
+              - shortlink_moderator
+              - user
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    userPublic:
+      type: object
+      properties:
+        _id:
+          type: string
+          uniqueItems: true
+        username:
+          type: string
+          description: The username of the user
+          uniqueItems: true
+        first_name:
+          type: string
+          description: The first name of the user
+        last_name:
+          type: string
+          description: The last name of the user
+        email:
+          type: string
+          description: The email of the user
+          uniqueItems: true
+        role:
+          type: array
+          items:
+            type: string
+            description: User role(s)
+            enum:
+              - admin
+              - editor
+              - forum_moderator
+              - shortlink_moderator
+              - user
+        group:
+          type: array
+          items:
+            type: string
+            description: FK of The group(s) of the user
+    userList:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/userProtected"
+        page:
+          type: integer
+          description: The page of the list/query
+        pages:
+          type: integer
+          description: The number of pages available
+        message:
+          type: string
+          description: A message to be displayed to the user
+        success:
+          type: boolean
+          description: Whether the request was successful or not
+    userEditCreateRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          description: The username of the user
+          uniqueItems: true
+        first_name:
+          type: string
+          description: The first name of the user
+        last_name:
+          type: string
+          description: The last name of the user
+        email:
+          type: string
+          description: The email of the user
+          uniqueItems: true
+        group:
+          type: array
+          items:
+            type: string
+            description: FK of The group(s) of the user
+        role:
+          type: array
+          items:
+            type: string
+            description: User role(s)
+            enum:
+              - admin
+              - editor
+              - forum_moderator
+              - shortlink_moderator
+              - user
+        password:
+          type: string
+          description: The password of the user
+    userPasswordEditResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: "#/components/schemas/userProtected"
+        message:
+          type: string
+          description: A message to be displayed to the user
+          default: "Password updated successfully"
+        success:
+          type: boolean
+          description: Whether the request was successful or not
+    userEditResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: "#/components/schemas/userProtected"
+        message:
+          type: string
+          description: A message to be displayed to the user
+          default: "User updated successfully"
+        success:
+          type: boolean
+          description: Whether the request was successful or not
+    userCreateResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: "#/components/schemas/userProtected"
+        message:
+          type: string
+          description: A message to be displayed to the user
+          default: "User created successfully"
+        success:
+          type: boolean
+          description: Whether the request was successful or not
+    userDeleteResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          $ref: "#/components/schemas/userProtected"
+        message:
+          type: string
+          description: A message to be displayed to the user
+          default: "User deleted successfully"
+        success:
+          type: boolean
+          description: Whether the request was successful or not
+    # -----------------------------------------------------------------------------------
+    authLogin:
+      type: object
+      properties:
+        username:
+          type: string
+          description: The username or email of the user
+        password:
+          type: string
+          description: The password of the user
+    authLoginResponse:
+      type: object
+      properties:
+        data:
+          type: string
+          default: "null"
+        message:
+          type: string
+          description: A message to be displayed to the user
+          default: "Login successful"
+        success:
+          type: boolean
+          description: Whether the request was successful or not
+          default: true
+  # -----------------------------------------------------------------------------------
+  securitySchemes:
+    cookieAuth: # arbitrary name for the security scheme; will be used in the "security" key later
+      type: apiKey
+      in: cookie
+      name: connect.sid # cookie name
+# -----------------------------------------------------------------------------------
+security:
+  - cookieAuth: []
