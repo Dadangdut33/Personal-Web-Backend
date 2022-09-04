@@ -5,7 +5,7 @@
 /**
  * Repository issue link
  */
-export const ___issue___ = "https://github.com/Litbang-HIMTI/Backend-Website-Himti/issues";
+export const ___issue___ = "https://github.com/Dadangdut33/Personal-Web-Backend/issues";
 
 /**
  * User collection name

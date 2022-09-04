@@ -10,6 +10,7 @@ interface IProject {
 	description: string;
 	tags: string[];
 	links: linkIcon[];
+	position: number;
 }
 export interface IProjectModel extends IProject, Document {}
 
@@ -43,6 +44,10 @@ const projectSchema = new Schema<IProjectModel>(
 				},
 			],
 			required: true,
+		},
+		position: {
+			type: Number,
+			default: 0,
 		},
 	},
 	{ collection: colProject, timestamps: true }

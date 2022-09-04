@@ -8,8 +8,13 @@ export const getAllProjects = async (req: Request, res: Response) => {
 	const count = await projectModel.countDocuments().exec();
 	const perPage = parseInt(req.query.perPage as string) || count || 15; // no perPage means get all
 	const page = parseInt(req.query.page as string) - 1 || 0;
+	const byPosition = req.query.byPosition === "true";
 
-	const projects = (await projectModel.aggregate([{ $match: {} }, { $sort: { createdAt: -1 } }, { $skip: perPage * page }, { $limit: perPage }]).exec()) as IProjectModel[];
+	const aggregations: any[] = [{ $match: {} }, { $sort: { createdAt: -1 } }, { $skip: perPage * page }, { $limit: perPage }];
+	if (byPosition) aggregations.push({ $sort: { position: 1 } });
+	else aggregations.push({ $sort: { createdAt: -1 } });
+
+	const projects = (await projectModel.aggregate(aggregations).exec()) as IProjectModel[];
 
 	return res.status(200).json({
 		data: projects,
