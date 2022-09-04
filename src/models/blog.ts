@@ -10,8 +10,6 @@ interface IBlog {
 	content: string;
 	thumbnail?: string;
 	tags?: string[];
-	views?: number;
-	likes?: number;
 	pinned?: boolean;
 	showAtHome?: boolean;
 	editedBy?: Schema.Types.ObjectId;

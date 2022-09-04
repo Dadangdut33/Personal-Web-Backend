@@ -49,12 +49,6 @@ export const getOneBlog = async (req: Request, res: Response) => {
 			.exec()
 	)[0] as IBlogModel;
 
-	// check query update view
-	const { updateView } = req.query;
-	if (updateView && !!blog) {
-		await blogModel.findByIdAndUpdate(blog._id, { $inc: { views: 1 } }, { new: true }).exec();
-	}
-
 	return res.status(!!blog ? 200 : 422).json({
 		data: blog,
 		message: !!blog ? "Blog retrieved successfully" : `Blog _id: "${_id}" not found`,
@@ -123,16 +117,6 @@ export const updateBlog = async (req: Request, res: Response) => {
 		message: !!blog
 			? `Successfully updated Blog${!!revisionPost ? ` and successfully moved old blog post to revision history` : ` fail to move old blog post to revision history`}`
 			: `Blog _id: "${_id}" not found`,
-		success: !!blog,
-	});
-};
-
-export const likeBlog = async (req: Request, res: Response) => {
-	const { _id } = req.params;
-	const blog = await blogModel.findByIdAndUpdate(_id, { $inc: { likes: 1 } }, { new: true }).select("-__v -_id -updatedAt -createdAt");
-	return res.status(!!blog ? 200 : 422).json({
-		data: blog,
-		message: !!blog ? "Blog liked successfully" : `Blog _id: "${_id}" not found`,
 		success: !!blog,
 	});
 };
