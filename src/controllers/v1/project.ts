@@ -44,6 +44,21 @@ export const getProjectStats = async (_req: Request, res: Response) => {
 	});
 };
 
+interface ITagsCategoryCount {
+	_id: string;
+	count: number;
+}
+
+export const getTagsOnly = async (_req: Request, res: Response) => {
+	// get distinct tags and count how many blogs each tag has
+	const tagCounts = (await projectModel.aggregate([{ $match: {} }, { $unwind: "$tags" }, { $group: { _id: "$tags", count: { $sum: 1 } } }]).exec()) as ITagsCategoryCount[];
+	return res.status(200).json({
+		data: tagCounts,
+		message: "Tags retrieved successfully",
+		success: true,
+	});
+};
+
 // POST
 export const createProject = async (req: Request, res: Response) => {
 	const project = await projectModel.create(req.body);

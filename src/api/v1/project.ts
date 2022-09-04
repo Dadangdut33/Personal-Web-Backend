@@ -8,6 +8,7 @@ const r = Router();
 r.get("/stats", validateLoggedIn, cProject.getProjectStats); // * stats
 
 // * public
+r.get("/tags", cProject.getTagsOnly);
 r.get("/", cProject.getAllProjects);
 r.get("/:_id", cProject.getOneProject);
 
