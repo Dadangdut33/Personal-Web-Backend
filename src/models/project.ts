@@ -3,7 +3,7 @@ import { colProject, urlSafeRegex } from "../utils";
 
 interface linkIcon {
 	url: string;
-	icon: string;
+	type: string;
 }
 interface IProject {
 	title: string;
