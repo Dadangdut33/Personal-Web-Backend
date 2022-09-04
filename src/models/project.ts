@@ -36,7 +36,7 @@ const projectSchema = new Schema<IProjectModel>(
 						type: String,
 						required: true,
 					},
-					icon: {
+					type: {
 						type: String,
 						required: true,
 					},
