@@ -23,7 +23,7 @@ const noteSchema = new Schema<INoteModel>(
 			required: true,
 			validate: {
 				validator: (v: string) => urlSafeRegex.test(v),
-				message: "Title name must be alphanumeric or these allowed characters: underscore, hyphen, space, ', \", comma, and @",
+				message: "Title name must be alphanumeric or these allowed characters: underscore, hyphen, space, ', \", comma, period, and @",
 			},
 		},
 		content: {

@@ -34,7 +34,7 @@ const blogSchema = new Schema<IBlogModel>(
 			required: true,
 			validate: {
 				validator: (v: string) => urlSafeRegex.test(v),
-				message: "Blog title must be alphanumeric or these allowed characters: underscore, hyphen, space, ', \", comma, and @",
+				message: "Blog title must be alphanumeric or these allowed characters: underscore, hyphen, space, ', \", comma, period, and @",
 			},
 		},
 		visibility: {
