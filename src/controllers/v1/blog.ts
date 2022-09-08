@@ -12,7 +12,7 @@ export const getAllBlogs = async (req: Request, res: Response) => {
 	const content = req.query.content === "1";
 
 	const aggregations = [
-		{ $match: {} },
+		{ $match: req.query.visibility ? { visibility: req.query.visibility } : {} },
 		{ $sort: { createdAt: -1 } },
 		{ $skip: perPage * page },
 		{ $limit: perPage },
