@@ -49,7 +49,7 @@ app.use(morgan("dev")); // logger, use preset dev
 app.use(helmet()); // security
 app.use(
 	cors({
-		origin: ___prod___ ? ["http://dadangdut33.codes/"] : true, // only allow whitelisted origin in production
+		origin: true,
 		methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD", "DELETE"],
 		credentials: true,
 	})
