@@ -42,8 +42,6 @@ const sessionCfg = {
 		ttl,
 	}),
 };
-const whiteLists = ["https://dadangdut33.codes"];
-
 // --------------------------------------------------
 // middleware
 app.set("trust proxy", true);
@@ -51,8 +49,9 @@ app.use(morgan("dev")); // logger, use preset dev
 app.use(helmet()); // security
 app.use(
 	cors({
-		origin: ___prod___ ? whiteLists : true, // only allow whitelisted origin in production
+		origin: ___prod___ ? ["https://dadangdut33.codes/"] : true, // only allow whitelisted origin in production
 		methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD", "DELETE"],
+		preflightContinue: true,
 		credentials: true,
 	})
 ); // cors (cross-origin resource sharing)
