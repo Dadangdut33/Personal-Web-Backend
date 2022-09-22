@@ -83,7 +83,7 @@ export const getPostStats = async (_req: Request, res: Response) => {
 
 // POST
 export const createBlog = async (req: Request, res: Response) => {
-	const blog = await blogModel.create({ ...req.body, author: req.session.userId! });
+	const blog = await blogModel.create({ ...req.body, author: Types.ObjectId(req.session.userId) });
 	return res.status(!!blog ? 201 : 500).json({
 		data: blog,
 		message: !!blog ? "Blog created successfully" : `Unable to create blog post. If you think that this is a bug, please submit an issue at ${___issue___}`,
@@ -95,20 +95,22 @@ export const createBlog = async (req: Request, res: Response) => {
 export const updateBlog = async (req: Request, res: Response) => {
 	const { _id } = req.params;
 	let revisionPost;
-	const blog = await blogModel.findByIdAndUpdate(_id, { ...req.body, editedBy: req.session.userId }, { runValidators: true, new: true }).select("-__v -_id -updatedAt -createdAt");
+	const blog = await blogModel
+		.findByIdAndUpdate(_id, { ...req.body, editedBy: Types.ObjectId(req.session.userId) }, { runValidators: true, new: true })
+		.select("-__v -_id -updatedAt -createdAt");
 	if (blog) {
 		const revision = await blogRevisionModel.find({ blogId: _id }).select("-_id -__v -createdAt -updatedAt").sort({ revision: -1 /* desc */ }).limit(1);
 		if (revision.length > 0) {
 			// update revision by spread and save new revision with incremented revision number
 			revisionPost = await blogRevisionModel.create({
 				...(blog._doc as IBlogRevisionModel),
-				editedBy: req.session.userId,
+				editedBy: Types.ObjectId(req.session.userId),
 				revision: revision[0].revision + 1,
 				blogId: Types.ObjectId(_id!),
 			});
 		} else {
 			// create new revision with revision number 1
-			revisionPost = await blogRevisionModel.create({ ...(blog._doc as IBlogRevisionModel), editedBy: req.session.userId, revision: 1, blogId: Types.ObjectId(_id) });
+			revisionPost = await blogRevisionModel.create({ ...(blog._doc as IBlogRevisionModel), editedBy: Types.ObjectId(req.session.userId), revision: 1, blogId: Types.ObjectId(_id) });
 		}
 	}
 
@@ -220,7 +222,7 @@ export const getOneBlogRevision = async (req: Request, res: Response) => {
 
 // POST
 export const createBlogRevision = async (req: Request, res: Response) => {
-	const blogRevision = await blogRevisionModel.create({ ...req.body, author: req.session.userId! });
+	const blogRevision = await blogRevisionModel.create({ ...req.body, author: Types.ObjectId(req.session.userId) });
 	return res.status(!!blogRevision ? 201 : 500).json({
 		data: blogRevision,
 		message: !!blogRevision ? "Blog revision created successfully" : `Unable to create blog revision. If you think that this is a bug, please submit an issue at ${___issue___}`,
@@ -231,7 +233,7 @@ export const createBlogRevision = async (req: Request, res: Response) => {
 // PUT
 export const updateBlogRevision = async (req: Request, res: Response) => {
 	const { _id } = req.params;
-	const blogRevision = await blogRevisionModel.findByIdAndUpdate(_id, { ...req.body, editedBy: req.session.userId }, { runValidators: true, new: true });
+	const blogRevision = await blogRevisionModel.findByIdAndUpdate(_id, { ...req.body, editedBy: Types.ObjectId(req.session.userId) }, { runValidators: true, new: true });
 	return res.status(!!blogRevision ? 200 : 422).json({
 		data: blogRevision,
 		message: !!blogRevision ? "Blog revision updated successfully" : `Fail to update. Blog revision _id: "${_id}" not found`,

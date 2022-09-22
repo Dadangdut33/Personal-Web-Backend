@@ -10,7 +10,7 @@ import MongoStore from "connect-mongo";
 import "express-session";
 declare module "express-session" {
 	interface SessionData {
-		userId: Schema.Types.ObjectId;
+		userId: string;
 		user: string;
 	}
 }
@@ -23,7 +23,6 @@ import { shortlinkRouterV1 } from "./api/v1/shortlink";
 import { blogRouterV1 } from "./api/v1/blog";
 import { noteRouterV1 } from "./api/v1/note";
 import { projectRouterV1 } from "./api/v1/project";
-import { Schema } from "mongoose";
 
 // --------------------------------------------------
 dotenv.config(); // load env

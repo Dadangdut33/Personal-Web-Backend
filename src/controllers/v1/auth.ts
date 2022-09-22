@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { Types } from "mongoose";
 import { IUserModel, userModel } from "../../models/user";
 
 export const validateLoggedIn = async (req: Request, res: Response, next: NextFunction) => {
@@ -28,7 +27,7 @@ export const login = async (req: Request, res: Response) => {
 	if (!valid) return res.status(401).json({ data: null, message: "Invalid username/email or password", success: false });
 
 	// save session
-	req.session.userId = Types.ObjectId(user._id);
+	req.session.userId = user._id;
 	req.session.user = username;
 
 	return res.status(200).json({
