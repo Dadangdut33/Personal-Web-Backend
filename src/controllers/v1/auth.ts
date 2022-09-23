@@ -2,6 +2,9 @@ import { Request, Response, NextFunction } from "express";
 import { IUserModel, userModel } from "../../models/user";
 
 export const validateLoggedIn = async (req: Request, res: Response, next: NextFunction) => {
+	console.log(req.session);
+	console.log(req.session.user);
+	console.log(req.session.userId);
 	if (req.session && req.session.user) {
 		next();
 	} else {
