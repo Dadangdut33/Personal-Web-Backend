@@ -11,11 +11,12 @@ r.put("/revision/:_id", validateLoggedIn, cBlog.updateBlogRevision);
 r.delete("/revision/:_id", validateLoggedIn, cBlog.deleteBlogRevision);
 
 // * stats
+r.get("/admin", cBlog.getAllBlogsAdmin);
 r.get("/stats", validateLoggedIn, cBlog.getPostStats);
 
 // * public get blog
 r.get("/tags", cBlog.getTagsOnly);
-r.get("/", cBlog.getAllBlogs);
+r.get("/", cBlog.getAllBlogsPublic);
 r.get("/:_id", cBlog.getOneBlog);
 
 // * Protected logged in
