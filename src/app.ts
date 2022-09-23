@@ -30,7 +30,7 @@ const app = express();
 const ttl = 24 * 60 * 60 * 1000 * 3; // 3 days
 const sessionCfg: expressSession.SessionOptions = {
 	secret: process.env.SESSION_SECRET!,
-	cookie: { maxAge: ttl, secure: ___prod___, sameSite: "none" },
+	cookie: { maxAge: ttl, secure: ___prod___, sameSite: ___prod___ ? "none" : "lax" },
 	resave: false,
 	saveUninitialized: false,
 	store: new MongoStore({
