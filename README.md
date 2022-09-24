@@ -1,24 +1,12 @@
 <p align="center">
-  <img src="https://avatars.githubusercontent.com/u/106340941">
-</p>
-
-<h1 align="center">Backend Website Himti</h1>
-<p align="center">
-  <a href="https://github.com/Litbang-HIMTI/Backend-Website-Himti/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/Litbang-HIMTI/Backend-Website-Himti"></a>
-  <a href="https://github.com/Litbang-HIMTI/Backend-Website-Himti/pulls"><img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr/Litbang-HIMTI/Backend-Website-Himti"></a>
+  <a href="https://github.com/Dadangdut33/Personal-Web-Backend/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/Dadangdut33/Personal-Web-Backend"></a>
+  <a href="https://github.com/Dadangdut33/Personal-Web-Backend/pulls"><img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr/Dadangdut33/Personal-Web-Backend"></a>
   <br />
-  <a href="https://github.com/Litbang-HIMTI/Backend-Website-Himti/stargazers"><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/Litbang-HIMTI/Backend-Website-Himti?style=social"></a>
-  <a href="https://github.com/Litbang-HIMTI/Backend-Website-Himti/network/members"><img alt="GitHub forks" src="https://img.shields.io/github/forks/Litbang-HIMTI/Backend-Website-Himti?style=social"></a>
+  <a href="https://github.com/Dadangdut33/Personal-Web-Backend/stargazers"><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/Dadangdut33/Personal-Web-Backend?style=social"></a>
+  <a href="https://github.com/Dadangdut33/Personal-Web-Backend/network/members"><img alt="GitHub forks" src="https://img.shields.io/github/forks/Dadangdut33/Personal-Web-Backend?style=social"></a>
 </p>
 
-Backend tech stack:
-MongoDB + Express.js + Node.js (typescript)
-
-Docs made using swagger.
-
-<p align="center">
-  <img src="./preview.png">
-</p>
+Backend code of my personal web. Made using express. Take a look at [frontend](https://github.com/Dadangdut33/Personal-Web) for frontend code.
 
 # Table of Contents
 
