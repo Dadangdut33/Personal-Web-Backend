@@ -2,9 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import { IUserModel, userModel } from "../../models/user";
 
 export const validateLoggedIn = async (req: Request, res: Response, next: NextFunction) => {
-	console.log(req.session);
-	console.log(req.session.user);
-	console.log(req.session.userId);
 	if (req.session && req.session.user) {
 		next();
 	} else {
@@ -55,9 +52,6 @@ export const logout = async (req: Request, res: Response) => {
 };
 
 export const check = async (req: Request, res: Response) => {
-	console.log(req.session);
-	console.log(req.session.user);
-	console.log(req.session.userId);
 	if (req.session && req.session.user) {
 		// get user data
 		const user = await userModel.findById(req.session.userId).select("-salt -hash");
