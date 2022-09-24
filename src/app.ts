@@ -30,7 +30,7 @@ const app = express();
 const ttl = 24 * 60 * 60 * 1000 * 3; // 3 days
 const sessionCfg: expressSession.SessionOptions = {
 	secret: process.env.SESSION_SECRET!,
-	cookie: { maxAge: ttl, secure: ___prod___, sameSite: ___prod___ ? "none" : "lax", httpOnly: false, domain: ___prod___ ? ".dadangdut33.codes" : undefined },
+	cookie: { maxAge: ttl, secure: ___prod___, sameSite: ___prod___ ? "none" : "lax", httpOnly: false, domain: ___prod___ ? "dadangdut33.codes" : undefined },
 	resave: false,
 	saveUninitialized: false,
 	store: new MongoStore({
@@ -48,7 +48,7 @@ app.use(morgan("dev")); // logger, use preset dev
 app.use(helmet()); // security
 app.use(
 	cors({
-		origin: true,
+		origin: ___prod___ ? ["https://dadangdut33.codes"] : true,
 		methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD", "DELETE"],
 		credentials: true,
 	})
