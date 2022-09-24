@@ -79,9 +79,23 @@ export const getOneBlog = async (req: Request, res: Response) => {
 			.exec()
 	)[0] as IBlogModel;
 
+	// update views if found
+	if (blog) await blogModel.updateOne({ _id: Types.ObjectId(_id) }, { $inc: { views: 1 } }).exec();
+
 	return res.status(!!blog ? 200 : 422).json({
 		data: blog,
 		message: !!blog ? "Blog retrieved successfully" : `Blog _id: "${_id}" not found`,
+		success: !!blog,
+	});
+};
+
+export const likeBlog = async (req: Request, res: Response) => {
+	const { _id } = req.params;
+	// find and update blog likes, increment by 1
+	const blog = await blogModel.findOneAndUpdate({ _id: Types.ObjectId(_id) }, { $inc: { likes: 1 } }).exec();
+	return res.status(!!blog ? 200 : 422).json({
+		data: blog,
+		message: !!blog ? "Blog liked successfully" : `Blog _id: "${_id}" not found`,
 		success: !!blog,
 	});
 };

@@ -18,6 +18,7 @@ r.get("/stats", validateLoggedIn, cBlog.getPostStats);
 r.get("/tags", cBlog.getTagsOnly);
 r.get("/", cBlog.getAllBlogsPublic);
 r.get("/:_id", cBlog.getOneBlog);
+r.put("/:_id/like", cBlog.likeBlog);
 
 // * Protected logged in
 r.use(validateLoggedIn);
