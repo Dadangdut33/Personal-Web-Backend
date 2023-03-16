@@ -48,7 +48,7 @@ app.use(morgan("dev")); // logger, use preset dev
 app.use(helmet()); // security
 app.use(
 	cors({
-		origin: ___prod___ ? ["https://dadangdut33.codes"] : true,
+		origin: ___prod___ ? ["https://dadangdut33.vercel.app"] : true,
 		methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD", "DELETE"],
 		credentials: true,
 	})
