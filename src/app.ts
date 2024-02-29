@@ -16,7 +16,7 @@ import { projectRouterV1 } from "./api/v1/project";
 import { shortlinkRouterV1 } from "./api/v1/shortlink";
 import { userRouterV1 } from "./api/v1/user";
 import { ___prod___ } from "./utils/constants";
-import { ExpressErrorHandler } from "./utils/error/expressErrorHandler";
+import { ExpressErrorHandler } from "./utils/error/ExpressErrorHandler";
 import { NotFoundError } from "./utils/error/notFoundError";
 
 declare module "express-session" {
