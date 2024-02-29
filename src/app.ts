@@ -35,8 +35,9 @@ const sessionCfg: expressSession.SessionOptions = {
   cookie: {
     maxAge: ttl,
     secure: ___prod___,
-    sameSite: false,
+    sameSite: ___prod___ ? "none" : "lax",
     httpOnly: false,
+    domain: ___prod___ ? "dadangdut33.vercel.app" : undefined,
   },
   resave: false,
   saveUninitialized: false,
@@ -50,6 +51,7 @@ const sessionCfg: expressSession.SessionOptions = {
 };
 // --------------------------------------------------
 // middleware
+app.enable("trust proxy"); // trust first proxy
 app.use(morgan("dev")); // logger, use preset dev
 app.use(helmet()); // security
 app.use(
