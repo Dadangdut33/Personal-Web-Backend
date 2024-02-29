@@ -1,14 +1,15 @@
 import { Router } from "express";
+
 import { validateLoggedIn } from "../../controllers/v1/auth";
 import {
-	getAllShortLinks,
-	getOneShortLink_public,
-	createShortLink,
-	updateShortLink,
-	deleteShortLink,
-	getShortlinkStats,
-	clickCountsOnly,
-	getOneShortLink_admin,
+  clickCountsOnly,
+  createShortLink,
+  deleteShortLink,
+  getAllShortLinks,
+  getOneShortLink_admin,
+  getOneShortLink_public,
+  getShortlinkStats,
+  updateShortLink,
 } from "../../controllers/v1/shortlink";
 
 const r = Router();

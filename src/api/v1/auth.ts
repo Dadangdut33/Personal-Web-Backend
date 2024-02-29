@@ -1,12 +1,11 @@
 import { Router } from "express";
 import rateLimit from "express-rate-limit";
-import { login, logout, check } from "../../controllers/v1/auth";
+
+import { check, login, logout } from "../../controllers/v1/auth";
 
 const limiter = rateLimit({
-	windowMs: 10 * 60 * 1000, // 10 minutes
-	max: 25, // Limit each IP to 25 requests per `window` (here, per 10 minutes)
-	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 25, // Limit each IP to 25 requests per `window` (here, per 10 minutes)
 });
 
 const r = Router();

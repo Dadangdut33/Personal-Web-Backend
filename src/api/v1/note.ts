@@ -1,6 +1,7 @@
 import { Router } from "express";
+
 import { validateLoggedIn } from "../../controllers/v1/auth";
-import { getAllNotes, getOneNote, createNote, updateNote, deleteNote } from "../../controllers/v1/note";
+import { createNote, deleteNote, getAllNotes, getOneNote, updateNote } from "../../controllers/v1/note";
 
 const r = Router();
 

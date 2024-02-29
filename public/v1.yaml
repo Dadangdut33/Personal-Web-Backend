@@ -12,14 +12,14 @@ info:
 
     This domain is protected from CORS. When in production, authentication from another websites will only work if the domain is whitelisted. It is set in the **CORS** option.
   contact:
-    email: contact@dadangdut33.codes
+    email: dadang.contact@gmail.com
   license:
     name: MIT
     url: https://github.com/Dadangdut33/Personal-Web-Backend/blob/master/LICENSE
   version: "1.0"
 externalDocs:
   description: Find out more about me
-  url: https://dadangdut33.codes/
+  url: https://dadangdut33.vercel.app/
 servers:
   - url: /v1
     description: V1 API
