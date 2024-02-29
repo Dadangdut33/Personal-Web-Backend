@@ -45,7 +45,7 @@ export const login = async (req: Request, res: Response) => {
   req.session.user = username;
 
   return res.status(200).json({
-    data: null,
+    data: req.session,
     message: "Login successful",
     success: true,
   });

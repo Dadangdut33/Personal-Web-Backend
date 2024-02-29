@@ -35,9 +35,8 @@ const sessionCfg: expressSession.SessionOptions = {
   cookie: {
     maxAge: ttl,
     secure: ___prod___,
-    sameSite: ___prod___ ? "none" : "lax",
+    sameSite: false,
     httpOnly: false,
-    domain: ___prod___ ? "dadangdut33.vercel.app" : undefined,
   },
   resave: false,
   saveUninitialized: false,
