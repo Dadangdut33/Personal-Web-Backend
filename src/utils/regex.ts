@@ -1,4 +1,3 @@
-/* eslint-disable */
 /**
  * Email regex
  */
